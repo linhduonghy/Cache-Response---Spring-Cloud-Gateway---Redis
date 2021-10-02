@@ -33,12 +33,8 @@ public class URLTree {
 	}
 
 	public boolean checkMatchURL(URLNode node, String[] urls, int i) {
-		
-		if (i == urls.length) {
-			return false;
-		}
-		
-		if (node == null) {
+				
+		if (i == urls.length || node == null) {
 			return false;
 		}
 		
@@ -51,27 +47,24 @@ public class URLTree {
 		
 		System.err.println("Child:" +child + "," + wildCardChild);
 		
-		// if exist leaf node *
-		if (wildCardChild != null && wildCardChild.isLeaf()) {			
-			System.err.println("wildcard *");
-			return true;
-		}
-		
-		if (i == urls.length - 1) { // end value 
-			System.err.println("end");			
-			if (child != null && child.isLeaf()) {
-				System.err.println(child);
+		if (wildCardChild != null) { // exist wildcard node has value equal current path		
+			if (wildCardChild.isLeaf()) { // if exist leaf node *
+				System.err.println("wildcard *");
+				return true;
+			}
+			if (checkMatchURL(wildCardChild, urls,  i + 1)) { // continue with subtree wildcard
 				return true;
 			}
 		}
 		
-		boolean c1 = checkMatchURL(child, urls, i + 1);
-		boolean c2 = checkMatchURL(wildCardChild, urls, i + 1);
-		
-		boolean c3 = false; // /a/*/b  match /a/1/2/b  -> * = 1/2
-		if (node.getValue() != null && node.getValue().equals("*")) {
-			c3 = checkMatchURL(node, urls, i + 1);
+		if (child != null) { // exist child node has value equal current path
+			if (child.isLeaf() && i == urls.length - 1) {
+				return true;
+			}
+			if (checkMatchURL(child, urls, i)) { // continue with subtree
+				return true;
+			}
 		}
-		return c1 || c2 || c3;		
+		return false;
 	}
 }
