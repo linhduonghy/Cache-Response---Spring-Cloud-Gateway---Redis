@@ -38,18 +38,13 @@ public class URLTree {
 			return false;
 		}
 		
-		System.err.print("Value:" + urls[i]+",Node:"+node.getValue()+",");
-		
 		String value = urls[i];
 
 		URLNode child = node.getChild(value);
 		URLNode wildCardChild = node.getChild("*");
 		
-		System.err.println("Child:" +child + "," + wildCardChild);
-		
 		if (wildCardChild != null) { // exist wildcard node has value equal current path		
-			if (wildCardChild.isLeaf()) { // if exist leaf node *
-				System.err.println("wildcard *");
+			if (wildCardChild.isLeaf() && i == urls.length - 1) { // if exist leaf node *
 				return true;
 			}
 			if (checkMatchURL(wildCardChild, urls,  i + 1)) { // continue with subtree wildcard
@@ -61,7 +56,7 @@ public class URLTree {
 			if (child.isLeaf() && i == urls.length - 1) {
 				return true;
 			}
-			if (checkMatchURL(child, urls, i)) { // continue with subtree
+			if (checkMatchURL(child, urls, i + 1)) { // continue with subtree
 				return true;
 			}
 		}
